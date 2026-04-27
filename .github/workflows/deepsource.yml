@@ -27,7 +27,6 @@ jobs:
 
   deepsource:
     runs-on: ubuntu-latest
-    if: ${{ secrets.DEEPSOURCE_DSN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -37,6 +36,7 @@ jobs:
       - name: Run tests with coverage
         run: go test ./... -coverprofile=coverage.out
       - name: Upload coverage to DeepSource
+        if: ${{ secrets.DEEPSOURCE_DSN != '' }}
         uses: deepsourcelabs/test-coverage-action@master
         with:
           key: go

@@ -76,12 +76,12 @@ func normalizeOptions(opts Options) Options {
 }
 
 func attemptContext(parent context.Context, timeout time.Duration) (context.Context, func()) {
-		       if timeout <= 0 {
-			       // No timeout specified, so return the parent context and a no-op cancel function.
-			       // This is intentional: the caller expects a cancel function for symmetry.
-			       // The empty function below is a placeholder to match the context.WithTimeout signature.
-			       return parent, func() {} // no-op cancel function
-		       }
+	if timeout <= 0 {
+		// No timeout specified, so return the parent context and a no-op cancel function.
+		// This is intentional: the caller expects a cancel function for symmetry.
+		// The empty function below is a placeholder to match the context.WithTimeout signature.
+		return parent, func() {} // no-op cancel function
+	}
 	return context.WithTimeout(parent, timeout)
 }
 
@@ -108,7 +108,10 @@ func sleepWithContext(ctx context.Context, delay time.Duration) error {
 }
 
 func runOnce(ctx context.Context, c Command, grace time.Duration) error {
-	// Validate command name and arguments to mitigate code injection risk
+	// SECURITY: Validate command name and arguments to mitigate code injection risk.
+	// This check prevents shell metacharacters and other dangerous input from reaching exec.Command.
+	// If you ever allow user input to reach this function, consider restricting c.Name to a fixed allowlist.
+	// Review all call sites to ensure c.Name and c.Args are not influenced by untrusted sources.
 	if c.Name == "" {
 		return fmt.Errorf("command name must not be empty")
 	}

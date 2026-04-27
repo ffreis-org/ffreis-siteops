@@ -19,9 +19,9 @@ jobs:
 
   smoke:
     runs-on: ubuntu-latest
-    if: ${{ secrets.STITCHER_SMOKE_BASE_URL != '' }}
     steps:
       - name: Smoke checks
+        if: ${{ secrets.STITCHER_SMOKE_BASE_URL != '' }}
         env:
           BASE: ${{ secrets.STITCHER_SMOKE_BASE_URL }}
         run: |
