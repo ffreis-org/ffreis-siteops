@@ -27,7 +27,6 @@ jobs:
 
   sonar:
     runs-on: ubuntu-latest
-    if: ${{ secrets.SONAR_TOKEN != '' && secrets.SONAR_HOST_URL != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -37,6 +36,7 @@ jobs:
       - name: Coverage for Sonar
         run: go test ./... -coverprofile=coverage.out
       - uses: SonarSource/sonarqube-scan-action@v4
+        if: ${{ secrets.SONAR_TOKEN != '' && secrets.SONAR_HOST_URL != '' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

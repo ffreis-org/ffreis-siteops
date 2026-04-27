@@ -1,4 +1,3 @@
-const warnInvalidLogEnv = "invalid log env; using default"
 package logx
 
 import (
@@ -8,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 )
+
+const warnInvalidLogEnv = "invalid log env; using default"
 
 func New(service string) *slog.Logger {
 	return newWithEnv(service, os.Getenv, os.Stderr)
