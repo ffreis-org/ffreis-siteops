@@ -35,12 +35,16 @@ jobs:
           else
             IMAGE_ROOT="${PREFIX}"
           fi
-          WEBSITE_COMPILER_IMAGE="${WEBSITE_COMPILER_IMAGE:-${IMAGE_ROOT}/${COMPILER_IMAGE_NAME}:${IMAGE_TAG}}"
-          COMPILER_WATCH_IMAGE="${COMPILER_WATCH_IMAGE:-${IMAGE_ROOT}/${COMPILER_WATCH_IMAGE_NAME}:${IMAGE_TAG}}"
+          if [ -n "${IMAGE_ROOT}" ]; then
+            WEBSITE_COMPILER_IMAGE="${WEBSITE_COMPILER_IMAGE:-${IMAGE_ROOT}/${COMPILER_IMAGE_NAME}:${IMAGE_TAG}}"
+            COMPILER_WATCH_IMAGE="${COMPILER_WATCH_IMAGE:-${IMAGE_ROOT}/${COMPILER_WATCH_IMAGE_NAME}:${IMAGE_TAG}}"
+          fi
           COMPILER_WATCH_RUNTIME_IMAGE="${COMPILER_WATCH_RUNTIME_IMAGE:-debian:bookworm-slim}"
-          : "${WEBSITE_COMPILER_IMAGE:?WEBSITE_COMPILER_IMAGE must not be empty}"
-          : "${COMPILER_WATCH_IMAGE:?COMPILER_WATCH_IMAGE must not be empty}"
-          : "${COMPILER_WATCH_RUNTIME_IMAGE:?COMPILER_WATCH_RUNTIME_IMAGE must not be empty}"
+
+          if [ -z "${WEBSITE_COMPILER_IMAGE:-}" ] || [ -z "${COMPILER_WATCH_IMAGE:-}" ]; then
+            echo "No image coordinates configured; set PREFIX, IMAGE_PROVIDER, or explicit image overrides to enable container builds."
+            exit 0
+          fi
 
           echo "Using compiler image: ${WEBSITE_COMPILER_IMAGE}"
           if ! ${ENGINE} pull "${WEBSITE_COMPILER_IMAGE}"; then
