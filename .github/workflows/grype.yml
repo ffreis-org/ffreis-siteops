@@ -13,7 +13,7 @@ jobs:
   grype:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - id: scan
         uses: anchore/scan-action@869c549e657a088dc0441b08ce4fc0ecdac2bb65
         with:
