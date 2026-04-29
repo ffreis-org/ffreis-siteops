@@ -20,7 +20,7 @@ jobs:
       - name: Download govulncheck dependencies
         run: go mod tidy
       - name: Install govulncheck (reproducible)
-        run: go install golang.org/x/vuln/cmd/govulncheck@$(go list -m -f '{{.Version}}' golang.org/x/vuln)
+        run: go install golang.org/x/vuln/cmd/govulncheck@"$(go list -m -f '{{.Version}}' golang.org/x/vuln)"
       - name: Run semgrep
         run: semgrep scan --config p/default --sarif --output semgrep.sarif .
       - name: Validate SARIF output
