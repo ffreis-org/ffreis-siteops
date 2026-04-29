@@ -1,0 +1,23 @@
+name: Siteops Code Quality (Sonar)
+
+on:
+  pull_request:
+    paths:
+      - '**'
+      - '.github/workflows/**'
+  push:
+    branches: [main, master]
+    paths:
+      - '**'
+      - '.github/workflows/**'
+
+jobs:
+  sonar:
+    permissions:
+      contents: read
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-sonar.yml@b253b2329a11552b6276781c56f6dc6fd1718710
+    with:
+      go-version: "1.25.8"
+      working-directory: "."
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

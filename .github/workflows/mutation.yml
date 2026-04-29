@@ -1,0 +1,20 @@
+name: Mutation Testing
+
+on:
+  schedule:
+    - cron: "0 2 * * 0"   # Sundays 02:00 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  mutation:
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-mutation.yml@b253b2329a11552b6276781c56f6dc6fd1718710
+    with:
+      packages: "./internal/..."
+      threshold: 60
