@@ -1,0 +1,30 @@
+name: Siteops API Gateway Smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 4 * * *'
+
+jobs:
+  require-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate required secrets
+        shell: bash
+        env:
+          SITEOPS_SMOKE_BASE_URL: ${{ secrets.SITEOPS_SMOKE_BASE_URL }}
+        run: |
+          set -euo pipefail
+          [ -n "${SITEOPS_SMOKE_BASE_URL}" ] || (echo "Missing required secret: SITEOPS_SMOKE_BASE_URL" >&2; exit 1)
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Smoke checks
+        # if: ${{ secrets.SITEOPS_SMOKE_BASE_URL != '' }} # Disabled: context 'secrets' not allowed here
+        env:
+          BASE: ${{ secrets.SITEOPS_SMOKE_BASE_URL }}
+        run: |
+          set -euo pipefail
+          curl -fsS "$BASE/" >/dev/null
+          curl -fsS "$BASE/index.html" >/dev/null

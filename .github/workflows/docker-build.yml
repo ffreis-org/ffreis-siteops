@@ -1,0 +1,66 @@
+name: Siteops Docker Build
+
+on:
+  pull_request:
+    paths:
+      - '**'
+      - '.github/workflows/**'
+  push:
+    branches: [main, master]
+    paths:
+      - '**'
+      - '.github/workflows/**'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build container image
+        run: |
+          set -euo pipefail
+          if command -v podman >/dev/null 2>&1; then
+            ENGINE="podman"
+          else
+            ENGINE="docker"
+          fi
+
+          PREFIX="${PREFIX:-}"
+          IMAGE_PROVIDER="${IMAGE_PROVIDER:-}"
+          IMAGE_TAG="${IMAGE_TAG:-local}"
+          COMPILER_IMAGE_NAME="${COMPILER_IMAGE_NAME:-website-compiler-cli}"
+          COMPILER_WATCH_IMAGE_NAME="${COMPILER_WATCH_IMAGE_NAME:-website-compiler-watch}"
+          if [ -n "${IMAGE_PROVIDER}" ]; then
+            IMAGE_ROOT="${IMAGE_PROVIDER}/${PREFIX}"
+          else
+            IMAGE_ROOT="${PREFIX}"
+          fi
+          if [ -n "${IMAGE_ROOT}" ]; then
+            WEBSITE_COMPILER_IMAGE="${WEBSITE_COMPILER_IMAGE:-${IMAGE_ROOT}/${COMPILER_IMAGE_NAME}:${IMAGE_TAG}}"
+            COMPILER_WATCH_IMAGE="${COMPILER_WATCH_IMAGE:-${IMAGE_ROOT}/${COMPILER_WATCH_IMAGE_NAME}:${IMAGE_TAG}}"
+          fi
+          COMPILER_WATCH_RUNTIME_IMAGE="${COMPILER_WATCH_RUNTIME_IMAGE:-debian:bookworm-slim}"
+
+          if [ -z "${WEBSITE_COMPILER_IMAGE:-}" ] || [ -z "${COMPILER_WATCH_IMAGE:-}" ]; then
+            echo "No image coordinates configured; set PREFIX, IMAGE_PROVIDER, or explicit image overrides to enable container builds."
+            exit 0
+          fi
+
+          echo "Using compiler image: ${WEBSITE_COMPILER_IMAGE}"
+          if ! ${ENGINE} pull "${WEBSITE_COMPILER_IMAGE}"; then
+            echo "Failed to pull compiler image: ${WEBSITE_COMPILER_IMAGE}" >&2
+            echo "Set IMAGE_PROVIDER/PREFIX/IMAGE_TAG or WEBSITE_COMPILER_IMAGE to a resolvable image." >&2
+            exit 1
+          fi
+
+          if [ -f containers/Dockerfile ]; then
+            ${ENGINE} build \
+              --build-arg WEBSITE_COMPILER_IMAGE="${WEBSITE_COMPILER_IMAGE}" \
+              --build-arg COMPILER_WATCH_RUNTIME_IMAGE="${COMPILER_WATCH_RUNTIME_IMAGE}" \
+              -t "${COMPILER_WATCH_IMAGE}" \
+              -f containers/Dockerfile .
+          elif [ -f Dockerfile ]; then
+            ${ENGINE} build -t "${COMPILER_WATCH_IMAGE}" .
+          else
+            echo "No Dockerfile found, skipping."
+          fi
