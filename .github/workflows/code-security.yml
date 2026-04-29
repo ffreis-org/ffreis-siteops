@@ -20,7 +20,9 @@ jobs:
         with:
           go-version: '1.25.8'
           cache: true
-      - name: Install govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Download govulncheck dependencies
+        run: go mod tidy
+      - name: Install govulncheck (reproducible)
+        run: go install golang.org/x/vuln/cmd/govulncheck@"$(go list -m -f '{{.Version}}' golang.org/x/vuln)"
       - name: Run govulncheck
         run: govulncheck ./...
