@@ -7,14 +7,18 @@ on:
       - '.github/workflows/**'
 
 permissions:
-  contents: read
   security-events: write
 
 jobs:
   semgrep:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@a5ad31d6a139d249332a2605b85202e8c0b78450 # v2.19.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
       - name: Install semgrep (pinned version)
         run: pip install --only-binary ':all:' semgrep==1.67.0
@@ -29,10 +33,10 @@ jobs:
         run: |
           set -euo pipefail
           test -s semgrep.sarif || (echo "semgrep.sarif was not generated or is empty" && exit 1)
-      - uses: actions/upload-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: siteops-semgrep-sarif
           path: semgrep.sarif
-      - uses: github/codeql-action/upload-sarif@v4
+      - uses: github/codeql-action/upload-sarif@e46ed2cbd01164d986452f91f178727624ae40d7 # v4.35.3
         with:
           sarif_file: semgrep.sarif
