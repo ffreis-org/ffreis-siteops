@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   review:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)

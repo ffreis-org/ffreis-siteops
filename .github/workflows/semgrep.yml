@@ -17,5 +17,6 @@ concurrency:
 
 jobs:
   semgrep:
+    timeout-minutes: 30
     uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-semgrep.yml@main
 
