@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   require-secrets:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -26,6 +27,7 @@ jobs:
           [ -n "${SITEOPS_SMOKE_BASE_URL}" ] || (echo "Missing required secret: SITEOPS_SMOKE_BASE_URL" >&2; exit 1)
 
   smoke:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
