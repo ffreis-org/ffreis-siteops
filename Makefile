@@ -20,7 +20,7 @@ LEFTHOOK_DIR ?= $(CURDIR)/.bin
 LEFTHOOK_BIN ?= $(LEFTHOOK_DIR)/lefthook
 
 .PHONY: mutation-test help info siteops-build deploy deploy-local \
-	build build-inline serve validate-site-data validate-assets clean \
+	build build-inline watch serve validate-site-data validate-assets clean \
 	compose-up compose-down compose-logs compose-rebuild publish \
 	docker-up docker-down docker-logs docker-rebuild \
 	fmt-check lint test test-race coverage-gate smoke-check secrets-scan-staged quality-gates hook-generated-drift \
@@ -62,7 +62,10 @@ deploy-local: ## Start local dev server — watch + rebuild on every change (req
 publish: ## Alias of deploy
 	$(SITEOPS) publish
 
-serve: ## Serve website using YAML config
+watch: ## Build, serve, and rebuild on file changes (no Docker needed)
+	$(SITEOPS) watch
+
+serve: ## Serve website using YAML config (one-shot build + serve, no watch)
 	$(SITEOPS) serve
 
 validate-site-data: ## Validate configured site data against the site contract
@@ -163,7 +166,28 @@ hook-generated-drift: ## Run generate target if present and fail on drift
 		echo "No 'generate' target found; skipping generated drift check."; \
 	fi
 
-lefthook-bootstrap: ## Download lefthook binary into ./.bin
+
+PLATFORM_STANDARDS_SHA := b6a9ef92199954e3da5b80814321cb92f649fb81
+PLATFORM_STANDARDS_RAW := https://raw.githubusercontent.com/FelipeFuhr/ffreis-platform-standards
+
+HOOK_SCRIPTS := \
+	check_merge_markers.sh \
+	check_large_files.sh \
+	check_binary_files.sh \
+	check_commit_msg.sh \
+	check_required_tools.sh
+
+hook-scripts: ## Download bootstrap + hook scripts from ffreis-platform-standards
+	@mkdir -p scripts/hooks
+	@curl -fsSL "$(PLATFORM_STANDARDS_RAW)/$(PLATFORM_STANDARDS_SHA)/lefthook/bootstrap_lefthook.sh" \
+		-o scripts/bootstrap_lefthook.sh && chmod +x scripts/bootstrap_lefthook.sh
+	@for script in $(HOOK_SCRIPTS); do \
+		curl -fsSL "$(PLATFORM_STANDARDS_RAW)/$(PLATFORM_STANDARDS_SHA)/lefthook/scripts/$$script" \
+			-o "scripts/hooks/$$script" && chmod +x "scripts/hooks/$$script"; \
+	done
+	@echo "Hook scripts downloaded."
+
+lefthook-bootstrap: hook-scripts ## Download lefthook binary into ./.bin
 	LEFTHOOK_VERSION="$(LEFTHOOK_VERSION)" BIN_DIR="$(LEFTHOOK_DIR)" bash ./scripts/bootstrap_lefthook.sh
 
 lefthook-install: lefthook-bootstrap ## Install git hooks if missing
