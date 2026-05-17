@@ -10,14 +10,14 @@ import (
 )
 
 type Config struct {
-	ProjectName          string            `yaml:"project_name"`
-	CompilerCommand      string            `yaml:"compiler_command"`
-	CompilerSrc          string            `yaml:"compiler_src"`
-	WebsiteRoot          string            `yaml:"website_root"`
-	OutDir               string            `yaml:"out_dir"`
-	SiteDataSource       string            `yaml:"site_data_source"`
-	SitemapBaseURL       string            `yaml:"sitemap_base_url"`
-	MirrorExternalAssets bool              `yaml:"mirror_external_assets"`
+	ProjectName          string `yaml:"project_name"`
+	CompilerCommand      string `yaml:"compiler_command"`
+	CompilerSrc          string `yaml:"compiler_src"`
+	WebsiteRoot          string `yaml:"website_root"`
+	OutDir               string `yaml:"out_dir"`
+	SiteDataSource       string `yaml:"site_data_source"`
+	SitemapBaseURL       string `yaml:"sitemap_base_url"`
+	MirrorExternalAssets bool   `yaml:"mirror_external_assets"`
 	// JSInlineThreshold overrides the compiler's -js-inline-threshold flag.
 	// nil = omit (compiler uses its own default of 8192). 0 = disable inlining.
 	JSInlineThreshold *int `yaml:"js_inline_threshold"`
@@ -36,14 +36,14 @@ type Config struct {
 	// InlineBodyCSS inlines body <link rel=stylesheet> as <style> blocks instead of
 	// the deferred external pattern, eliminating CSS files but preventing cross-page
 	// CSS cache reuse.
-	InlineBodyCSS        bool              `yaml:"inline_body_css"`
-	DefaultAddr          string            `yaml:"default_addr"`
-	ContainerCommand     string            `yaml:"container_command"`
-	ComposeCommand       []string          `yaml:"compose_command"`
-	ComposeFile          string            `yaml:"compose_file"`
-	ComposeEnv           map[string]string `yaml:"compose_env"`
-	Publish              PublishConfig     `yaml:"publish"`
-	Builds               BuildsConfig      `yaml:"builds"`
+	InlineBodyCSS    bool              `yaml:"inline_body_css"`
+	DefaultAddr      string            `yaml:"default_addr"`
+	ContainerCommand string            `yaml:"container_command"`
+	ComposeCommand   []string          `yaml:"compose_command"`
+	ComposeFile      string            `yaml:"compose_file"`
+	ComposeEnv       map[string]string `yaml:"compose_env"`
+	Publish          PublishConfig     `yaml:"publish"`
+	Builds           BuildsConfig      `yaml:"builds"`
 }
 
 // BuildsConfig holds settings for the build artifact staging bucket.
