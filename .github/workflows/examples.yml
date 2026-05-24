@@ -6,9 +6,6 @@ on:
       - '**'
       - '.github/workflows/**'
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,6 +13,8 @@ concurrency:
 jobs:
   examples:
     timeout-minutes: 30
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
