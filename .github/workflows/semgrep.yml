@@ -8,14 +8,13 @@ on:
   schedule:
     - cron: "0 8 * * 1"
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   semgrep:
+    permissions:
+      contents: read
     uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-semgrep.yml@main
 

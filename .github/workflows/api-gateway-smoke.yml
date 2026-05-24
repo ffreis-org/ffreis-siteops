@@ -5,12 +5,11 @@ on:
   schedule:
     - cron: '20 4 * * *'
 
-permissions:
-  contents: read
-
 jobs:
   require-secrets:
     timeout-minutes: 15
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
@@ -28,6 +27,8 @@ jobs:
 
   smoke:
     timeout-minutes: 15
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
