@@ -11,9 +11,6 @@ on:
       - '**'
       - '.github/workflows/**'
 
-permissions:
-  contents: read
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -22,6 +19,8 @@ jobs:
   integration:
     timeout-minutes: 30
     if: ${{ !github.event.pull_request.draft }}
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
