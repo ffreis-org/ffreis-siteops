@@ -118,7 +118,7 @@ func RunDev(ctx context.Context, logger *slog.Logger, spec DevSpec) error {
 	case err := <-compilerErr:
 		// Bounded shutdown: the ctx.Done branch below uses 10s; mirror that
 		// here so a hung HTTP connection on the proxy can't trap the caller.
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		_ = srv.Shutdown(shutdownCtx)
 		cancel()
 		<-proxyErr
@@ -135,7 +135,7 @@ func RunDev(ctx context.Context, logger *slog.Logger, spec DevSpec) error {
 		return nil
 	case <-ctx.Done():
 		logger.Info("shutdown signal received, stopping dev mode")
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		shutdownCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 10*time.Second)
 		defer cancel()
 		_ = srv.Shutdown(shutdownCtx)
 		<-proxyErr
