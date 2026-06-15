@@ -1,5 +1,9 @@
 # siteops (ffreis-siteops)
 
+<!-- ffreis-badges:start -->
+[![CI](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/FelipeFuhr/ffreis-badges/main/badges/ffreis-siteops/ci.json)](https://github.com/FelipeFuhr/ffreis-siteops/actions) [![License](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/FelipeFuhr/ffreis-badges/main/badges/ffreis-siteops/license.json)](https://github.com/FelipeFuhr/ffreis-siteops/blob/main/LICENSE)
+<!-- ffreis-badges:end -->
+
 Go CLI that orchestrates website builds through a configurable compiler CLI.
 
 It uses YAML config and is designed so project-specific data can stay local and ignored.
