@@ -13,5 +13,5 @@ jobs:
   semgrep:
     permissions:
       contents: read
-    uses: ffreis-org/ffreis-workflows-go/.github/workflows/go-semgrep.yml@main
+    uses: FelipeFuhr/ffreis-workflows-go/.github/workflows/go-semgrep.yml@main
 
